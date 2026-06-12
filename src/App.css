@@ -1,3 +1,16 @@
+.navbar {
+  padding:0;
+}
+
+.logo{
+     margin-bottom: -5px;
+    margin-top: -4px;
+    height: 61px;
+    margin-left: -12px;
+}
+
+
+
 .App {
   text-align: center;
 }
@@ -35,4 +48,18 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+
+/* dark mode */
+.light-theme {
+  background: #ffffff;
+  color: #000;
+  min-height: 100vh;
+}
+
+.dark-theme {
+  background: #121212;
+  color: white;
+  min-height: 100vh;
 }
