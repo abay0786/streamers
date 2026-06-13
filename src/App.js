@@ -28,7 +28,7 @@ const [category, setCategory] = useState({
   title: "Popular Movies"
 });
 
- // 👇 Add Step 3 here
+ // local storage for darkmode
   useEffect(() => {
     localStorage.setItem(
       "darkMode",
