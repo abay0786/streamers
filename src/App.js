@@ -4,15 +4,19 @@
 
 import './App.css';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react'; // Added lazy and Suspense
 
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import Navbar from './components/Navbar';
 import Caroulsel2 from './components/Carousel2';
-import Details from './components/Details';
-
 import MovieApi from './Services/MovieService';
+
+// ======================
+// Lazy Loaded Components
+// ======================
+// This will split the Details page into a separate bundle file downloaded only when clicked
+const Details = lazy(() => import('./components/Details'));
 
 
 // ======================
@@ -66,7 +70,7 @@ function App() {
       JSON.stringify(darkMode)
     );
 
-  }, [darkMode]);
+  });
 
   // ======================
   // Render UI
@@ -84,61 +88,66 @@ function App() {
 
       <BrowserRouter>
 
-        <Routes>
+        {/* Wrap your Routes inside Suspense to provide a fallback UI while lazy components load */}
+        <Suspense fallback={<div className="loading-fallback">Loading page...</div>}>
+          
+          <Routes>
 
-          {/* ======================
-              Home Page
-          ====================== */}
+            {/* ======================
+                Home Page
+            ====================== */}
 
-          <Route
-            path="/"
-            element={
-              <>
-                {/* Navigation */}
+            <Route
+              path="/"
+              element={
+                <>
+                  {/* Navigation */}
 
-                <Navbar
-                  setCategory={setCategory}
-                  searchQuery={searchQuery}
-                  setSearchQuery={setSearchQuery}
+                  <Navbar
+                    setCategory={setCategory}
+                    searchQuery={searchQuery}
+                    setSearchQuery={setSearchQuery}
+                    darkMode={darkMode}
+                    setDarkMode={setDarkMode}
+                  />
+
+                  {/* Hero Carousel */}
+
+                  <Caroulsel2 />
+
+                  {/* Movie Grid */}
+
+                  {category && (
+
+                    <MovieApi
+                      category={category}
+                      searchQuery={searchQuery}
+                      darkMode={darkMode}
+                    />
+
+                  )}
+
+                </>
+              }
+            />
+
+            {/* ======================
+                Details Page
+            ====================== */}
+
+            <Route
+              path="/details/:type/:id"
+              element={
+                <Details
                   darkMode={darkMode}
                   setDarkMode={setDarkMode}
                 />
+              }
+            />
 
-                {/* Hero Carousel */}
+          </Routes>
 
-                <Caroulsel2 />
-
-                {/* Movie Grid */}
-
-                {category && (
-
-                  <MovieApi
-                    category={category}
-                    searchQuery={searchQuery}
-                    darkMode={darkMode}
-                  />
-
-                )}
-
-              </>
-            }
-          />
-
-          {/* ======================
-              Details Page
-          ====================== */}
-
-          <Route
-            path="/details/:type/:id"
-            element={
-              <Details
-                darkMode={darkMode}
-                setDarkMode={setDarkMode}
-              />
-            }
-          />
-
-        </Routes>
+        </Suspense>
 
       </BrowserRouter>
 
