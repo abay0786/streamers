@@ -1,34 +1,64 @@
+
+// ======================
+// Imports
+// ======================
+
 import React, { useEffect, useState } from "react";
+
 import { API_KEY, BASE_URL } from "../Services/MovieService";
+
 import "./Carousel2.css";
+
+
+// ======================
+// Carousel Component
+// ======================
 
 const Carousel = () => {
 
+  // ======================
+  // State Management
+  // ======================
+
   const [slides, setSlides] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
+
+  // ======================
+  // Fetch Trending Movies
+  // ======================
 
   useEffect(() => {
 
     const fetchSlides = async () => {
 
-      const response = await fetch(
-        `${BASE_URL}/trending/movie/week?api_key=${API_KEY}`
-      );
+      try {
 
-      const data = await response.json();
+        const response = await fetch(
+          `${BASE_URL}/trending/movie/week?api_key=${API_KEY}`
+        );
 
-      setSlides(data.results.slice(0, 5));
+        const data = await response.json();
+
+        setSlides(data.results.slice(0, 5));
+
+      } catch (error) {
+        console.log(error);
+      }
     };
 
     fetchSlides();
 
   }, []);
 
+  // ======================
+  // Auto Slide Every 5 Seconds
+  // ======================
+
   useEffect(() => {
 
     const interval = setInterval(() => {
 
-      setActiveIndex(prev =>
+      setActiveIndex((prev) =>
         slides.length
           ? (prev + 1) % slides.length
           : 0
@@ -40,36 +70,53 @@ const Carousel = () => {
 
   }, [slides]);
 
+  // ======================
+  // Loading State
+  // ======================
+
   if (!slides.length) return null;
+
+  // ======================
+  // Render UI
+  // ======================
 
   return (
     <div
       className="position-relative"
       style={{
         height: "80vh",
-        overflow: "hidden"
+        overflow: "hidden",
       }}
     >
+
+      {/* ======================
+          Background Image
+      ====================== */}
 
       <img
         key={slides[activeIndex].id}
         src={`https://image.tmdb.org/t/p/original${slides[activeIndex].backdrop_path}`}
-        alt=""
+        alt={slides[activeIndex].title}
         className="carousel-image"
       />
+
+      {/* ======================
+          Dark Overlay
+      ====================== */}
 
       <div
         className="position-absolute top-0 start-0 w-100 h-100"
         style={{
           background:
-            "linear-gradient(to top, rgba(0,0,0,.95), rgba(0,0,0,.2))"
+            "linear-gradient(to top, rgba(0,0,0,.95), rgba(0,0,0,.2))",
         }}
       >
 
-        <div
-          className="container h-100 d-flex align-items-end pb-5"
-        >
+        <div className="container h-100 d-flex align-items-end pb-5">
+
           <div className="text-white">
+
+            {/* Movie Title */}
 
             <h1
               key={`title-${slides[activeIndex].id}`}
@@ -78,6 +125,8 @@ const Carousel = () => {
               {slides[activeIndex].title}
             </h1>
 
+            {/* Movie Overview */}
+
             <p
               key={`overview-${slides[activeIndex].id}`}
               className="hero-overview"
@@ -85,11 +134,12 @@ const Carousel = () => {
               {slides[activeIndex].overview}
             </p>
 
+            {/* Action Buttons */}
+
             <div
               key={`buttons-${slides[activeIndex].id}`}
               className="hero-buttons"
             >
-
 
               <button className="btn btn-light btn-lg me-3">
                 ▶ Play
@@ -98,14 +148,18 @@ const Carousel = () => {
               <button className="btn btn-outline-light btn-lg">
                 More Info
               </button>
+
             </div>
 
           </div>
+
         </div>
 
       </div>
 
-      {/* Previous */}
+      {/* ======================
+          Previous Button
+      ====================== */}
 
       <button
         className="carousel-nav left"
@@ -120,7 +174,9 @@ const Carousel = () => {
         ❮
       </button>
 
-      {/* Next */}
+      {/* ======================
+          Next Button
+      ====================== */}
 
       <button
         className="carousel-nav right"
@@ -135,7 +191,9 @@ const Carousel = () => {
         ❯
       </button>
 
-      {/* Indicators */}
+      {/* ======================
+          Slide Indicators
+      ====================== */}
 
       <div className="carousel-dots">
 
@@ -160,5 +218,3 @@ const Carousel = () => {
 };
 
 export default Carousel;
-
-

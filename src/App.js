@@ -1,86 +1,149 @@
-// import logo from './logo.svg';
+// ======================
+// Imports
+// ======================
+
 import './App.css';
 
-import Navbar from './components/Navbar';
-import MovieApi from './Services/MovieService';
-
-import Caroulsel2 from './components/Carousel2';
+import { useState, useEffect } from 'react';
 
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+
+import Navbar from './components/Navbar';
+import Caroulsel2 from './components/Carousel2';
 import Details from './components/Details';
 
+import MovieApi from './Services/MovieService';
 
-import { useState,useEffect } from 'react';
+
+// ======================
+// App Component
+// ======================
 
 function App() {
 
+  // ======================
+  // Theme State
+  // Load saved theme from localStorage
+  // ======================
 
-  // const [darkMode, setDarkMode] = useState(false);
   const [darkMode, setDarkMode] = useState(() => {
-  const savedTheme = localStorage.getItem("darkMode");
-  return savedTheme ? JSON.parse(savedTheme) : false;
+
+    const savedTheme =
+      localStorage.getItem("darkMode");
+
+    return savedTheme
+      ? JSON.parse(savedTheme)
+      : false;
+
   });
+
+  // ======================
+  // Search State
+  // Used by Navbar & MovieService
+  // ======================
 
   const [searchQuery, setSearchQuery] = useState("");
 
-const [category, setCategory] = useState({
-  endpoint: "movie/popular",
-  title: "Popular Movies"
-});
+  // ======================
+  // Category State
+  // Default page = Popular Movies
+  // ======================
 
-//  dark mode
+  const [category, setCategory] = useState({
+    endpoint: "movie/popular",
+    title: "Popular Movies"
+  });
+
+  // ======================
+  // Save Theme Preference
+  // Runs whenever darkMode changes
+  // ======================
+
   useEffect(() => {
+
     localStorage.setItem(
       "darkMode",
       JSON.stringify(darkMode)
     );
+
   }, [darkMode]);
+
+  // ======================
+  // Render UI
+  // ======================
 
   return (
 
+    <div
+      className={
+        darkMode
+          ? "dark-theme"
+          : "light-theme"
+      }
+    >
 
-    < div className={darkMode ? "dark-theme" : "light-theme"}>
-  <BrowserRouter>
+      <BrowserRouter>
 
-    <Routes>
+        <Routes>
 
-      <Route
-        path="/"
-        element={
-          <>
-            <Navbar setCategory={setCategory} 
-            searchQuery={searchQuery}
-  setSearchQuery={setSearchQuery}
-  darkMode={darkMode}
+          {/* ======================
+              Home Page
+          ====================== */}
+
+          <Route
+            path="/"
+            element={
+              <>
+                {/* Navigation */}
+
+                <Navbar
+                  setCategory={setCategory}
+                  searchQuery={searchQuery}
+                  setSearchQuery={setSearchQuery}
+                  darkMode={darkMode}
                   setDarkMode={setDarkMode}
-/>
+                />
 
-            {/* <Carousel /> */}
-            <Caroulsel2 />
+                {/* Hero Carousel */}
 
-            {category && (
-              <MovieApi category={category} 
-              searchQuery={searchQuery}
-               darkMode={darkMode}/>
-            )}
-          </>
-        }
-      />
+                <Caroulsel2 />
 
-      <Route
-        path="/details/:type/:id"
-        element={<Details darkMode={darkMode}
-                setDarkMode={setDarkMode}/>}
-      />
+                {/* Movie Grid */}
 
-    </Routes>
+                {category && (
 
-  </BrowserRouter>
-  </div>
-);
+                  <MovieApi
+                    category={category}
+                    searchQuery={searchQuery}
+                    darkMode={darkMode}
+                  />
+
+                )}
+
+              </>
+            }
+          />
+
+          {/* ======================
+              Details Page
+          ====================== */}
+
+          <Route
+            path="/details/:type/:id"
+            element={
+              <Details
+                darkMode={darkMode}
+                setDarkMode={setDarkMode}
+              />
+            }
+          />
+
+        </Routes>
+
+      </BrowserRouter>
+
+    </div>
+  );
 }
 
 export default App;
-
-
-

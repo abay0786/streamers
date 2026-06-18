@@ -1,106 +1,163 @@
-import React, { useState, useEffect } from 'react';
-import Card from '../components/Card';
-import darkMode from '../App';
+
+// ======================
+// Imports
+// ======================
+
+import React, { useState, useEffect } from "react";
+
+import Card from "../components/Card";
 
 
+// ======================
+// TMDB API Configuration
+// ======================
+
+export const API_KEY =
+  "162189a807c34986a737e89ba0957529";
+
+export const BASE_URL =
+  "https://api.themoviedb.org/3";
 
 
+// ======================
+// Movie API Component
+// ======================
 
-export const API_KEY = "162189a807c34986a737e89ba0957529";
+const MovieApi = ({
+  category,
+  searchQuery,
+  darkMode,
+}) => {
 
-export const BASE_URL = "https://api.themoviedb.org/3";
-
-
-
-// popular card
-
-
-const MovieApi = ({ category,searchQuery,  darkMode }) => {
-
-  
-
-  // 1
+  // ======================
+  // State Management
+  // ======================
 
   const [movies, setMovies] = useState([]);
 
+  // ======================
+  // Fetch Movies / TV Shows
+  // ======================
 
-useEffect(() => {
+  useEffect(() => {
 
-  const fetchMovies = async () => {
+    const fetchMovies = async () => {
 
-    try {
+      try {
 
-      let url = "";
+        let url = "";
 
-      if (searchQuery.trim().length >= 3) {
+        // Search Results
 
-        url =
-          `${BASE_URL}/search/multi?api_key=${API_KEY}&query=${searchQuery}`;
+        if (searchQuery.trim().length >= 3) {
 
-      } else {
+          url =
+            `${BASE_URL}/search/multi?api_key=${API_KEY}&query=${searchQuery}`;
 
-        url =
-           `${BASE_URL}/${category.endpoint}?api_key=${API_KEY}`
+        }
+
+        // Category Results
+
+        else {
+
+          url =
+            `${BASE_URL}/${category.endpoint}?api_key=${API_KEY}`;
+
+        }
+
+        const response = await fetch(url);
+
+        const data = await response.json();
+
+        setMovies(data.results || []);
+
+      } catch (error) {
+
+        console.error(
+          "Error fetching movies:",
+          error
+        );
 
       }
 
-      let results = await fetch(url);
+    };
 
-      let parsedResults = await results.json();
+    fetchMovies();
 
-      setMovies(parsedResults.results);
+  }, [category, searchQuery]);
 
-    } catch (error) {
+  // ======================
+  // Determine Media Type
+  // ======================
 
-      console.error("Error fetching movies:", error);
+  const mediaType =
+    category?.endpoint?.includes("tv")
+      ? "tv"
+      : "movie";
 
-    }
+  // ======================
+  // Render UI
+  // ======================
 
-  };
-
-  fetchMovies();
-
-}, [category, searchQuery]);
-
-const mediaType = category?.endpoint?.includes("tv")
-  ? "tv"
-  : "movie";
-
- return (
-  <>
+  return (
     <div className="container">
 
-      <h2 className="text-center my-4">{category?.title}</h2>
+      {/* Section Heading */}
+
+      <h2 className="text-center my-4">
+        {category?.title}
+      </h2>
+
+      {/* Movie Grid */}
 
       <div className="row">
 
         {movies.map((card) => (
+
           <div
-            className="col-lg-3 col-md-4 col-sm-6 mb-4"
             key={card.id}
+            className="col-lg-3 col-md-4 col-sm-6 mb-4"
           >
+
             <Card
               id={card.id}
-              mediaType={card.media_type || mediaType}
+
+              mediaType={
+                card.media_type || mediaType
+              }
+
               title={
                 mediaType === "tv"
-                  ? (card.original_name || card.name)
+                  ? (
+                      card.original_name ||
+                      card.name
+                    )
                   : card.title
               }
+
               overview={card.overview}
-              image={`https://image.tmdb.org/t/p/w500${card.poster_path}`}
+
+              image={
+                card.poster_path
+                  ? `https://image.tmdb.org/t/p/w500${card.poster_path}`
+                  : "/no-image.png"
+              }
+
               darkMode={darkMode}
             />
+
           </div>
+
         ))}
 
       </div>
 
     </div>
-  </>
-);
+  );
 };
+
 export default MovieApi;
+
 
 
 
