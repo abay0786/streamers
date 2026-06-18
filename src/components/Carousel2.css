@@ -1,3 +1,7 @@
+/* ======================
+   Carousel Navigation Buttons
+====================== */
+
 .carousel-nav{
   position:absolute;
   top:50%;
@@ -14,17 +18,29 @@
   transition:.3s;
 }
 
+
+/* Hover Effect */
+
 .carousel-nav:hover{
   box-shadow:0 0 20px white;
 }
+
+/* Previous Button */
 
 .left{
   left:20px;
 }
 
+
+/* Next Button */
+
 .right{
   right:20px;
 }
+
+/* ======================
+   Carousel Indicators
+====================== */
 
 .carousel-dots{
   position:absolute;
@@ -36,6 +52,9 @@
   z-index:100;
 }
 
+
+/* Inactive Indicator */
+
 .dot{
   width:12px;
   height:12px;
@@ -45,6 +64,9 @@
   transition:all .4s ease;
   cursor:pointer;
 }
+
+
+/* Active Indicator */
 
 .active-dot{
   width:40px;
@@ -62,7 +84,9 @@
 
 
 
-/* smooth transition for carousel poster */
+/* ======================
+   Carousel Background Image
+====================== */
 
 .carousel-image{
   width:100%;
@@ -70,6 +94,12 @@
   object-fit:cover;
   animation:fadeIn 5s ease;
 }
+
+
+/* ======================
+   Fade-In Animation
+====================== */
+
 
 @keyframes fadeIn{
   from{
