@@ -88,7 +88,7 @@ function App() {
 
       <BrowserRouter>
 
-        {/* Wrap your Routes inside Suspense to provide a fallback UI while lazy components load */}
+        {/*Routes inside Suspense to provide a fallback UI while lazy components load */}
         <Suspense fallback={<div className="loading-fallback">Loading page...</div>}>
           
           <Routes>
